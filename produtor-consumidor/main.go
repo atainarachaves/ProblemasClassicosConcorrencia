@@ -95,8 +95,8 @@ func rodarExperimento(p, c, itens, timeoutMs, amostragemMs int) {
 	impls := []string{"channel", "semaforo"}
 
 	fmt.Printf("=== Experimento: P=%d C=%d itens/produtor=%d, variando K ===\n\n", p, c, itens)
-	fmt.Printf("%-10s %-6s %12s %14s %20s %10s\n",
-		"impl", "K", "throughput/s", "duração", "ocupação média", "ok?")
+	fmt.Printf("%-10s %-6s %12s %10s %16s %6s   %s\n",
+		"impl", "K", "throughput/s", "duração", "ocupação média", "ok?", "itens por consumidor")
 
 	for _, impl := range impls {
 		for _, k := range ks {
@@ -111,8 +111,15 @@ func rodarExperimento(p, c, itens, timeoutMs, amostragemMs int) {
 			}
 			r := rodar(cfg)
 			ok := r.Produzido == r.Consumido
-			fmt.Printf("%-10s %-6d %12.1f %14s %20.2f %10v\n",
-				impl, k, r.Throughput(), r.Duracao.Round(time.Millisecond), r.OcupacaoMedia, ok)
+			porConsumidor := ""
+			for i, v := range r.ItensPorConsumo {
+				if i > 0 {
+					porConsumidor += " / "
+				}
+				porConsumidor += fmt.Sprintf("C%d=%d", i, v)
+			}
+			fmt.Printf("%-10s %-6d %12.1f %10s %16.2f %6v   %s\n",
+				impl, k, r.Throughput(), r.Duracao.Round(time.Millisecond), r.OcupacaoMedia, ok, porConsumidor)
 			if !ok {
 				fmt.Fprintf(os.Stderr, "  ERRO DE INVARIANTE em impl=%s k=%d: produzido=%d consumido=%d\n",
 					impl, k, r.Produzido, r.Consumido)
