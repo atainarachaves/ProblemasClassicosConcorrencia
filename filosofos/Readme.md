@@ -25,6 +25,14 @@ go run -race . -n 5 -r 30 -estrategia hierarquia
 go run -race . -n 5 -r 30 -estrategia garcom
 ```
 
+**Windows:** o `-race` precisa de cgo e de um compilador C. Se aparecer
+`-race requires cgo`, instale o gcc (por exemplo
+`winget install -e --id BrechtSanders.WinLibs.POSIX.UCRT`), abra um terminal
+novo e rode `go env -w CGO_ENABLED=1` uma vez.
+
+A versão `base` termina com `exit status 2` de propósito: é o código de
+saída que indica que o deadlock foi detectado.
+
 ## Como cada versão evita (ou não) o deadlock
 
 - **base**: todos os filósofos pegam o garfo esquerdo primeiro. Uma barreira

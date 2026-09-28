@@ -28,7 +28,13 @@ Checar corretude (nenhuma das duas deve reportar data race):
 ```bash
 go run -race . -impl channel  -p 3 -c 3 -k 10 -itens 200
 go run -race . -impl semaforo -p 3 -c 3 -k 10 -itens 200
+go run -race . -experimento -p 3 -c 3 -itens 150
 ```
+
+**Windows:** o `-race` precisa de cgo e de um compilador C. Se aparecer
+`-race requires cgo`, instale o gcc (por exemplo
+`winget install -e --id BrechtSanders.WinLibs.POSIX.UCRT`), abra um terminal
+novo e rode `go env -w CGO_ENABLED=1` uma vez.
 
 ## Por que o mutex é necessário mesmo com semáforos
 
@@ -78,5 +84,6 @@ variável comum compartilhada), e quantas vezes o consumidor-sentinela
 disparou o timeout.
 
 O modo `-experimento` roda `channel` e `semaforo` para K = 1, 10, 100 com
-P e C fixos e imprime uma tabela comparativa — ponto de partida para a
-análise "efeito de K" pedida no relatório.
+P e C fixos e imprime uma tabela com throughput, duração, ocupação média,
+verificação produzido == consumido e itens consumidos por consumidor.
+São os dados usados na análise do efeito de K no relatório.
